@@ -71,17 +71,12 @@ minecraft {
 
 sourceSets {
     main {
-        compileClasspath += configurations.provided
         java {
             srcDir project.libMCEconomy2 + "/src/main/java"
         }
         resources {
             srcDir project.libMCEconomy2 + "/src/main/resources"
         }
-    }
-    test {
-        compileClasspath += configurations.provided
-        runtimeClasspath += configurations.provided
     }
 }
 
