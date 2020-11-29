@@ -1,67 +1,65 @@
 buildscript {
     repositories {
-        mavenCentral()
         maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
+            name = 'central'
+            url = 'https://repo1.maven.org/maven2/'
         }
         maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+            name = 'forge'
+            url = 'http://files.minecraftforge.net/maven'
+        }
+        maven {
+            name = 'sonatype'
+            url = 'https://oss.sonatype.org/content/repositories/snapshots/'
+        }
+        maven {
+            url 'https://plugins.gradle.org/m2/'
         }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'de.undercouch:gradle-download-task:4.1.1'
     }
 }
 repositories {
     maven {
-        name "chickenbones"
-        url "http://chickenbones.net/maven/"
+        name = 'central'
+        url = 'https://repo1.maven.org/maven2/'
     }
+    maven {
+        name "chickenbones"
+        url "https://chickenbones.net/maven/"
+    }
+    /*
     maven {
         name "mvnmrtjp"
         url "http://files.projectredwiki.com/maven"
     }
+    */
     maven {
         name "dvs1"
-        url "http://dvs1.progwml6.com/files/maven/"
+        url "https://dvs1.progwml6.com/files/maven/"
     }
     maven {
         name = "ic2"
-        url = "http://maven.ic2.player.to/"
+        url = "https://maven.ic2.player.to/"
     }
-    ivy {
-        name 'ComputerCraft'
-        artifactPattern "http://addons-origin.cursecdn.com/files/2244/605/[module][revision].[ext]"
-    }
-    ivy {
-        name 'Thaumcraft'
-        artifactPattern "http://addons-origin.cursecdn.com/files/2227/552/[module]-[revision].[ext]"
-    }
-    ivy {
-        name 'CoFHCore'
-        artifactPattern "http://addons-origin.cursecdn.com/files/2245/632/[module]-[revision].[ext]"
-    }
-    ivy {
-        name 'AppleMilkTea2'
-        artifactPattern "http://addons-origin.cursecdn.com/files/2274/437/[module]-[revision].[ext]"
-    }
+    mavenLocal()
 }
 
+apply plugin: 'java'
 apply plugin: 'forge'
+apply plugin: 'de.undercouch.download'
 
-version = "2.4.8.f-1.7.10"//${project.minecraft.version}"
-group= "shift.SextiarySector2" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "SextiarySector2"
+version = '2.4.8.f-1.7.10'
+group = 'shift.SextiarySector2'
+archivesBaseName = 'SextiarySector2'
 
 ext.libMCEconomy2 = "./lib/mceconomy2"
 
 minecraft {
-    version = "1.7.10-10.13.4.1448-1.7.10"
-    runDir = "eclipse"
-    assetDir = "eclipse/assets"
-
+    version = '1.7.10-10.13.4.1614-1.7.10'
+    runDir = 'run'
     replace '@VERSION@', project.version
     replace '@MC_VERSION@', version
 }
@@ -71,19 +69,15 @@ minecraft {
     it.options.compilerArgs += ['-source', '1.7', '-target', '1.7']
 }
 
-configurations {
-    provided
-}
-
 sourceSets {
     main {
         compileClasspath += configurations.provided
-	java {
-		srcDir project.libMCEconomy2 + "/src/main/java"
-	}
-	resources {
-		srcDir project.libMCEconomy2 + "/src/main/resources"
-	}
+        java {
+            srcDir project.libMCEconomy2 + "/src/main/java"
+        }
+        resources {
+            srcDir project.libMCEconomy2 + "/src/main/resources"
+        }
     }
     test {
         compileClasspath += configurations.provided
@@ -91,79 +85,176 @@ sourceSets {
     }
 }
 
-dependencies { 
-    compile fileTree(dir: 'api', include: '*.jar')
-    compile fileTree(dir: 'lib', include: '*.jar')
+dependencies {
+    compile fileTree(dir: 'api', exclude: '*-src.jar', include: ['*-dev.jar', '*-deobf.jar'])
+    compile fileTree(dir: 'lib', exclude: '*-src.jar', include: '*.jar')
 
-    //provided
-    provided "codechicken:CodeChickenLib:1.7.10-1.1.3.138:dev"
-    provided "codechicken:CodeChickenCore:1.7.10-1.0.7.47:dev"
-    provided "codechicken:NotEnoughItems:1.7.10-1.0.5.118:dev"
+    compile "codechicken:CodeChickenLib:1.7.10-1.1.3.138:dev"
+    compile "codechicken:CodeChickenCore:1.7.10-1.0.7.47:dev"
+    compile "codechicken:NotEnoughItems:1.7.10-1.0.5.118:dev"
     
-    provided "tconstruct:TConstruct:1.7.10-1.7.0.build734:deobf"
+    compile "tconstruct:TConstruct:1.7.10-1.7.0.build734:deobf"
     
-    provided group: 'cofh', name: 'CoFHCore', version: '[1.7.10]3.0.3B2-294-dev', ext: 'jar'
-    provided group: 'thaumcraft', name: 'Thaumcraft', version: '1.7.10-4.2.3.5', ext: 'jar'
-    provided group: 'ComputerCraft', name: 'ComputerCraft', version: '1.74', ext: 'jar'
-    provided group: 'AppleMilkTea2', name: 'AppleMilkTea2', version: '1.7.10_2.9c', ext: 'jar'
-    
-    provided "net.industrial-craft:industrialcraft-2:2.2.780-experimental:api"
+    // provided group: 'cofh', name: 'CoFHCore', version: '[1.7.10]3.0.3B2-294-dev', ext: 'jar'
+    // provided group: 'thaumcraft', name: 'Thaumcraft', version: '1.7.10-4.2.3.5', ext: 'jar'
+    // provided group: 'ComputerCraft', name: 'ComputerCraft', version: '1.74', ext: 'jar'
+    // provided group: 'AppleMilkTea2', name: 'AppleMilkTea2', version: '1.7.10_2.9c', ext: 'jar'
 
-    provided "codechicken:ForgeMultipart:1.7.10-1.2.0.345:dev"
+    compile "net.industrial-craft:industrialcraft-2:2.2.780-experimental:api"
 }
 
-processResources
-{
-
-    //exclude 'mcmod.info'
-
-    
-    // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
-
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs[0]) {
+processResources {
+    inputs.property 'version', project.version
+    inputs.property 'mcversion', project.minecraft.version
+    from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-                
-        // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        expand 'version': project.version, 'mcversion': project.minecraft.version
     }
-
-    // copy everything else, thats not the mcmod.info
-    from(sourceSets.main.resources.srcDirs[0]) {
+    from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
 }
 
 jar {
+    into('src/shift/sextiarysector/api') {
+        from 'src/main/java/shift/sextiarysector/api'
+    }
 
-  into('src/shift/sextiarysector/api') {
-    from 'src/main/java/shift/sextiarysector/api'
-  }
+    exclude('shift/mceconomy2/**')
+    exclude('assets/mceconomy2/**')
 
-  exclude('shift/mceconomy2/**')
-  exclude('assets/mceconomy2/**')
-
-  manifest {
-    attributes 'FMLCorePlugin' : 'shift.sextiarysector.asm.SSCore','FMLCorePluginContainsFMLMod':'true'
-  }
-
+    manifest {
+    attributes 'FMLCorePlugin': 'shift.sextiarysector.asm.SSCore',
+                'FMLCorePluginContainsFMLMod': 'true'
+    }
 }
 
-task devJar(type: Jar) {
+task makeSrcJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'src'
+}
+
+task makeDevJar(type: Jar) {
     from sourceSets.main.output
     from sourceSets.main.allSource
     exclude('shift/mceconomy2/**')
     exclude('assets/mceconomy2/**')
     classifier = 'dev'
 }
- 
+
 artifacts {
-    archives devJar
+    archives makeDevJar
 }
 
-task downloadMods(type: Copy) {
-  from configurations.provided
-  into 'api'
+def bon = 'https://ci.tterrag.com/job/BON2/lastSuccessfulBuild/artifact/build/libs/BON-2.4.0.15-all.jar'
+
+def deobfModsURLs = [
+        'https://media.forgecdn.net/files/2388/751/CoFHCore-%5b1.7.10%5d3.1.4-329-dev.jar'
+]
+
+def deobfMods = [
+        'CoFHCore-%5b1.7.10%5d3.1.4-329-dev.jar'
+]
+
+def obfModsURLs = [
+        'https://media.forgecdn.net/files/2269/339/ComputerCraft1.75.jar',
+        'https://media.forgecdn.net/files/2224/857/Baubles-1.7.10-1.0.1.10.jar',
+        'https://media.forgecdn.net/files/2227/552/Thaumcraft-1.7.10-4.2.3.5.jar',
+        'https://media.forgecdn.net/files/2341/197/AppleMilkTea2-1.7.10_2.9n.jar',
+        'https://media.forgecdn.net/files/2242/993/ForgeMultipart-1.7.10-1.2.0.345-universal.jar',
+        'https://media.forgecdn.net/files/2273/490/littleMaidMobX-1.7.x_0.1.1.jar'//Not the most up to date... but it'll work
+]
+
+def obfMods = [
+        'ComputerCraft1.75.jar',
+        'Baubles-1.7.10-1.0.1.10.jar',
+        'Thaumcraft-1.7.10-4.2.3.5.jar',
+        'AppleMilkTea2-1.7.10_2.9n.jar',
+        'ForgeMultipart-1.7.10-1.2.0.345-universal.jar',
+        'littleMaidMobX-1.7.x_0.1.1.jar'
+]
+
+task t_downloadDevMods {
+    download {
+        src deobfModsURLs
+        dest 'api'
+        onlyIfModified true
+    }
+    outputs.files(
+            deobfMods.each {
+                'api/' + it
+            }
+    )
+}
+
+task t_downloadObfMods {
+    download {
+        src obfModsURLs
+        dest 'temp'
+        onlyIfModified true
+    }
+    outputs.files(
+            obfMods.each {
+                'temp/' + it
+            }
+    )
+}
+
+task t_deobfMods {
+    download {
+        src bon
+        dest 'temp'
+        onlyIfModified true
+    }
+
+    def tree = fileTree(dir: 'temp', include: '*.jar', exclude: ['BON-*.jar', '*-deobf.jar'])
+    tree.each {
+        File file ->
+            def fn = file.name.substring(0, file.name.lastIndexOf('.')) + '-deobf.jar'
+            if (new File('api', fn).exists()) return
+
+            exec {
+                workingDir 'temp'
+                executable 'java'
+                args(['-jar', 'BON-2.4.0.15-all.jar', '--mappingsVer=1.7.10-10.13.4.1614-1.7.10', '--inputJar=' + file.name])
+            }
+            copy {
+                from file.path.substring(0, file.path.lastIndexOf('.')) + '-deobf.jar'
+                into 'api'
+            }
+    }
+
+    outputs.file('temp/BON-2.4.0.15-all.jar')
+    outputs.files(
+            obfMods.each {
+                'api/' + it.substring(it.lastIndexOf('.')) + '-deobf.jar'
+            }
+    )
+}
+
+task downloadMods {
+    doFirst {
+        mkdir 'temp'
+    }
+
+    t_downloadDevMods
+    t_downloadObfMods
+    t_deobfMods
+
+    doLast {
+        delete 'temp'
+    }
+
+    outputs.dir('api')
+
+    outputs.files(
+            deobfMods.each {
+                'api/' + it
+            }
+    )
+    outputs.files(
+            obfMods.each {
+                'api/' + it.substring(it.lastIndexOf('.')) + '-deobf.jar'
+            }
+    )
 }
